@@ -1,11 +1,9 @@
-import pymongo
 from requests_html import HTMLSession
+from mongoData.SaveData import saveData
+from comm.SkipNullResult import skipNullResult
 
 
 SESSION = HTMLSession()
-client = pymongo.MongoClient(host='localhost', port=27017)
-db = client['product']
-collection = db['bonjourhk']
 
 
 def getProductType():
@@ -29,25 +27,10 @@ def getProductList(url, type):
             'shareUrl': skipNullResult(item, '.image>a', 'href'),
             'source':'卓悦网'
         }
-        saveData(datadict)
+        saveData(datadict, 'product', 'bonjourhk')
     nextpage = res.find('li>a:contains(">")', first=True)
     if nextpage:
         getProductList(nextpage.attrs['href'], type)
-
- 
-def skipNullResult(obj, path, attr):
-    try:
-        if attr == '':
-            return obj.find(path, first=True).text
-        else:
-            return obj.find(path, first=True).attrs[attr]
-    except:
-        return ''
-
-
-def saveData(datadict):
-    result = collection.insert(datadict)
-    print(result)
 
 
 if __name__ == '__main__':

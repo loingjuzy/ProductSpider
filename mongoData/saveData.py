@@ -1,9 +1,9 @@
 import pymongo
 
 
-def saveData(datadict):
-    client = pymongo.MongoClient(host='localhost', port=27017)
-    db = client['test']
-    collection = db['students']
-    result = collection.insert(datadict)
+client = pymongo.MongoClient(host='localhost', port=27017)
+
+
+def saveData(datadict, db, collection):
+    result = client[db][collection].insert(datadict)
     print(result)
